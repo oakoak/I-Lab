@@ -53,15 +53,16 @@ int main()
     FILE *f = fopen( "onegin.txt", "r" );
     assert(f);
     fseek(f,0,SEEK_END);
-    long length = ftell(f);
+    long const length = ftell(f);
     char* text = (char*) calloc ( length + 1, sizeof ( *text ) );
     assert(text);
-    fread ( text, length, sizeof(*text), f );
+    fseek(f,0,SEEK_SET);            //Без этой строчки работает, но неправильно. С ней что то делает, но если в самом начале main поставить printf он его не выводит.
+    fread ( text, sizeof(*text), length, f );
     fclose ( f );
     f = NULL;
     text[length] = '\0';
 
-    int massLine = CountLine(text, length);
+    long massLine = CountLine(text, length);
     char** line = (char**) calloc(massLine, sizeof( *line ) );
     assert(line);
 
@@ -74,6 +75,17 @@ int main()
 
     SortingLines(line, massLine);
 
+    
+    FILE* sort_file = fopen("sortonegin.txt", "w");
+    for (long i = 0; i < massLine; i++)
+    {
+        fprintf(outputfile,"%s\n",line[i]);
+    }
+    fclose(outputfile);
+    outputfile = NULL;
+
+    
+    
     free(text);
     text = NULL;
     free(line);
