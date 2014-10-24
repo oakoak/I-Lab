@@ -1,3 +1,6 @@
+#ifndef LIST_H
+#define LIST_H
+
 #include <stdio.h>
 #include <assert.h>
 #include <stdlib.h>
@@ -41,3 +44,5 @@ int delete_all_list(List* head);
 /*
     removes all list
 */
+
+#endif

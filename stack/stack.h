@@ -1,11 +1,16 @@
 #ifndef STACK_H
 #define STACK_H
 
-
 #include <stdio.h>
 #include <assert.h>
 #include <stdlib.h>
 
+struct stek
+{
+    double* data;
+    long max_size;
+    long counter;
+};
 
 int stack_constructor ( struct stek* stek_ctor, long max_size );
 /**

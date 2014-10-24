@@ -1,13 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-
-struct stek
-{
-    double* data;
-    long max_size;
-    long counter;
-};
-
+#include "stack.h"
 int stack_constructor ( struct stek* stek_ctor, long max_size )
 {
     stek_ctor->max_size = max_size;
@@ -104,14 +95,4 @@ double stack_pop(struct stek* stek_pop)
     if ((stek_pop->counter-200 < stek_pop->max_size) && (stek_pop->counter >0))
         stek_pop->data = (double*) realloc(stek_pop->data, (stek_pop->max_size/=10)*sizeof(*stek_pop->data));
     return stek_pop->data[--stek_pop->counter];
-}
-
-int main()
-{
-    struct stek st = {};
-    stack_constructor(&st, 5);
-    for(int i=0; i<101;i++)
-        push(&st, 3);
-    stack_dump(&st);
-    return 0;
 }

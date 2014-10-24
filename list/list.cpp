@@ -1,3 +1,5 @@
+#include "list.h"
+
 List* add_right_element_list(List* head, int data)
 {
     List* New = (List*) malloc(sizeof(List));
@@ -24,14 +26,22 @@ List* add_right_element_list(List* head, int data)
 
 List* add_in_beginning_list (List* head, int data)
 {
-    while (head->left != NULL)
-        head = head->left;
     List* New = (List*) malloc(sizeof(List));
     assert(New);
     New->data = data;
-    New->left = New;
-    New->right = head;
+    New->left = NULL;
+    if (head == NULL)
+    {
+        head = New;
+        New->right = NULL;
+    }
+    else
+    {
+    while (head->left != NULL)
+        head = head->left;
+        New->right = head;
     head->left = New;
+    }
     return New;
 }
 
