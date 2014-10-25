@@ -5,7 +5,7 @@ int stack_constructor ( struct stek* stek_ctor, long max_size )
     stek_ctor->data = ( double* ) calloc ( stek_ctor->max_size, sizeof(stek_ctor) );
     if (stek_ctor->data == NULL)
         {
-            printf("Not enough memory for the stack size %d",max_size);
+            printf("Not enough memory for the stack size %ld",max_size);
             abort();
         }
     stek_ctor->counter = 0;
@@ -33,13 +33,13 @@ int stack_dump (struct stek* stek_push)
     else
         printf("Good stack ");
     printf(" [0x%lx] \n", (unsigned long)stek_push);
-    printf("counter = %d \nmax_size = %d\n", stek_push->counter, stek_push->max_size);
+    printf("counter = %ld \nmax_size = %ld\n", stek_push->counter, stek_push->max_size);
     printf("DATA [0x%lx]:\n", (unsigned long)stek_push->data);
     if (stek_push->data)
     {
         for (long i = 0; i < stek_push->max_size;i++)
         {
-            printf(" data[%d] = %lg ",i,stek_push->data[i]);
+            printf(" data[%ld] = %lg ",i,stek_push->data[i]);
             if (i >= stek_push->counter)
             {
                 printf("*");
@@ -61,6 +61,7 @@ int push (struct stek* stek_push, double x)
         else
         {
             printf("Memory is over, you can read the data.\n");
+            abort();
             return 1;
         }
 
