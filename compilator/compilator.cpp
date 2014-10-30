@@ -41,7 +41,8 @@ int compil(double* bin, long start, long finish, const long lenght, struct stek*
         case JNE_CODE:  break;
         case CALL_CODE: compil(bin_f, stack_pop(buffer), RETI_CODE, length, &buffer);
             break;
-        case RETI_CODE:  break;
+        case RETI_CODE:  return 0;
+            break;
         case POP_CODE: printf("%lg pop\n",stack_pop(buffer));
             break;
         case PUSHX_CODE: push(buffer, x);
