@@ -16,7 +16,7 @@ struct cpu
     double d;
     long length;
     struct stek* buffer;
-    double* command;
+    char* command;
 };
 
 int compil(long start, long finish, struct cpu* CPU)
@@ -27,7 +27,12 @@ int compil(long start, long finish, struct cpu* CPU)
     {
         switch ((int)CPU->command[counter++])
         {
-        case PUSH_CODE: push(CPU->buffer, CPU->command[counter++]); break;
+        case PUSH_CODE:
+        {
+            push(CPU->buffer,*((double*) &CPU->command[counter]));
+            counter+=sizeof(double);
+            break;
+        }
         case ADD_CODE: push(CPU->buffer, (stack_pop(CPU->buffer) + stack_pop(CPU->buffer))); break;
         case MUL_CODE: push(CPU->buffer, (stack_pop(CPU->buffer) * stack_pop(CPU->buffer))); break;
         case SUB_CODE:
@@ -57,44 +62,68 @@ int compil(long start, long finish, struct cpu* CPU)
                 push(CPU->buffer, x1);
             break;
         }
-        case JMP_CODE: counter = CPU->command[counter]; break;
+        case JMP_CODE: counter = *((double*) &CPU->command[counter]); break;
         case JA_CODE:
         {
             x1 = stack_pop(CPU->buffer);
             x2 = stack_pop(CPU->buffer);
-
+            if (x1 > x2)
+                counter = *((double*) &CPU->command[counter]);
+            else
+                counter++;
+            break;
         }
-           if (stack_pop(CPU->buffer) > stack_pop(CPU->buffer))
-                            counter = CPU->command[counter];
-                        else
-                            counter++;
-                        break;
-        case JAE_CODE:  if (stack_pop(CPU->buffer) >= stack_pop(CPU->buffer))
-                            counter = CPU->command[counter];
-                        else
-                            counter++;
-                        break;
-        case JB_CODE:   if (stack_pop(CPU->buffer) < stack_pop(CPU->buffer))
-                            counter = CPU->command[counter];
-                        else
-                            counter++;
-                        break;
-        case JBE_CODE:  if (stack_pop(CPU->buffer) <= stack_pop(CPU->buffer))
-                            counter = CPU->command[counter];
-                        else
-                            counter++;
-                        break;
-        case JE_CODE:   if (stack_pop(CPU->buffer) == stack_pop(CPU->buffer))
-                            counter = CPU->command[counter];
-                        else
-                            counter++;
-                        break;
-        case JNE_CODE:  if (stack_pop(CPU->buffer) != stack_pop(CPU->buffer))
-                            counter = CPU->command[counter];
-                        else
-                            counter++;
-                        break;
-        case CALL_CODE: compil(CPU->command[counter], RETI_CODE, CPU); break;
+        case JAE_CODE:
+        {
+            x1 = stack_pop(CPU->buffer);
+            x2 = stack_pop(CPU->buffer);
+            if (x1 >= x2)
+                counter = *((double*) &CPU->command[counter]);
+            else
+                counter++;
+            break;
+        }
+        case JB_CODE:
+        {
+            x1 = stack_pop(CPU->buffer);
+            x2 = stack_pop(CPU->buffer);
+            if (x1 < x2)
+                counter = *((double*) &CPU->command[counter]);
+            else
+                counter++;
+            break;
+        }
+        case JBE_CODE:
+        {
+            x1 = stack_pop(CPU->buffer);
+            x2 = stack_pop(CPU->buffer);
+            if (x1 <= x2)
+                counter = *((double*) &CPU->command[counter]);
+            else
+                counter++;
+            break;
+        }
+        case JE_CODE:
+        {
+            x1 = stack_pop(CPU->buffer);
+            x2 = stack_pop(CPU->buffer);
+            if (x1 == x2)
+                counter = *((double*) &CPU->command[counter]);
+            else
+                counter++;
+            break;
+        }
+        case JNE_CODE:
+        {
+            x1 = stack_pop(CPU->buffer);
+            x2 = stack_pop(CPU->buffer);
+            if (x1 != x2)
+                counter = *((double*) &CPU->command[counter]);
+            else
+                counter++;
+            break;
+        }
+        case CALL_CODE: compil(*((double*) &CPU->command[counter]), RETI_CODE, CPU); break;
         case RETI_CODE:  if (finish == RETI_CODE)
                             return 0; break;
         case POP_CODE: printf("%lg pop\n",stack_pop(CPU->buffer)); break;
@@ -126,7 +155,7 @@ int cpu_dump(cpu* CPU)
     return 0;
 }
 
-int cpu_construct(cpu* CPU, double* bin, long length)
+int cpu_construct(cpu* CPU, char* bin, long length)
 {
     CPU->x = 0;
     CPU->a = 0;
@@ -155,9 +184,9 @@ int main()
     FILE* bin = fopen("bin", "rb");
     assert(bin);
     fseek(bin,0,SEEK_END);
-    long const length = ftell(bin)/sizeof(double);
+    long const length = ftell(bin)/sizeof(char);
     fseek(bin,0,SEEK_SET);
-    double* bin_f = (double*) malloc ( length*sizeof(double) );
+    char* bin_f = (char*) malloc ( length*sizeof(char) );
     fread(bin_f, sizeof(*bin_f), length, bin);
     fclose(bin);
     bin = NULL;

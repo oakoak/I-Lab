@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 
-double get_code_by_cmd_name(char* cmd);
+char get_code_by_cmd_name(char* cmd);
 
 struct address_command
 {
@@ -11,12 +11,6 @@ struct address_command
     long address;
     struct address_command* next;
 };
-/*
-int exit_assembler(char* message)
-{
-    printf("%s\n", message);
-    abort();
-}*/
 
 double adress_j(address_command* head, char* name_j)
 {
@@ -35,7 +29,7 @@ address_command* assembler(stek* commands_buffer, address_command* head)
     assert(litera != NULL);
     char* regist = (char*) calloc(MAX_LENGHT_COMMAND, sizeof(char));
     assert(regist != NULL);
-    double litera_d = 0;
+    char litera_d = 0;
     char flag = 0;
     while (feof(source) == 0)
     {
@@ -52,7 +46,8 @@ address_command* assembler(stek* commands_buffer, address_command* head)
             if (fscanf(source,"%lg",&push_value) > 0)
             {
                 push(commands_buffer,litera_d);
-                push(commands_buffer,push_value);
+                *((double*) &commands_buffer->data[commands_buffer->counter]) = push_value;
+                commands_buffer->counter+=sizeof(double);
             }
             else
             {
@@ -111,12 +106,16 @@ address_command* assembler(stek* commands_buffer, address_command* head)
             push(commands_buffer,litera_d);
             double j_adress = 0;
             if (fscanf(source,"%lg", &j_adress) > 0)
-                push(commands_buffer,j_adress);
+            {
+                *((double*) &commands_buffer->data[commands_buffer->counter]) = j_adress;
+                commands_buffer->counter+=sizeof(double);
+            }
             else
             {
                 char* name_j = (char*) calloc(MAX_LENGHT_COMMAND, sizeof(char));
                 fscanf(source,"%s", name_j);
-                push(commands_buffer,adress_j(head, name_j));
+                *((double*) &commands_buffer->data[commands_buffer->counter]) = adress_j(head, name_j);
+                commands_buffer->counter+=sizeof(double);
                 free(name_j);
                 name_j = NULL;
             }
@@ -151,7 +150,7 @@ address_command* assembler(stek* commands_buffer, address_command* head)
     return head;
 }
 
-double get_code_by_cmd_name(char* cmd)
+char get_code_by_cmd_name(char* cmd)
 {
     assert(cmd);
     if (strcmp(cmd,"PUSH") == 0)
@@ -263,7 +262,7 @@ int main()
     assembler(&commands_buffer, head);
 
     FILE* result = fopen("bin","wb");
-    fwrite(commands_buffer.data, sizeof(double), commands_buffer.counter, result);
+    fwrite(commands_buffer.data, sizeof(char), commands_buffer.counter, result);
     fclose(result);
     result = NULL;
     stack_destructor(&commands_buffer);

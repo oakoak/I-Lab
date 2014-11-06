@@ -5,13 +5,13 @@
 #include <assert.h>
 
 
-int print(FILE* dis, double* bin, long length)
+int print(FILE* dis, char* bin, long length)
 {
     long counter = 0;
     char* rtr_val = (char*) calloc (MAX_LENGHT_COMMAND, sizeof(char));
     while (counter < length)
     {
-        switch ((int)bin[counter++])
+        switch (bin[counter++])
         {
             case PUSH_CODE: strcpy(rtr_val,"PUSH"); break;
             case ADD_CODE: strcpy(rtr_val, "ADD"); break;
@@ -46,7 +46,10 @@ int print(FILE* dis, double* bin, long length)
         }
         fprintf(dis,"%s ", rtr_val);
         if ((bin[counter-1] == PUSH_CODE) || (bin[counter-1] == CALL_CODE) || (rtr_val[0] == 'J'))
-            fprintf(dis,"%lg", bin[counter++]);
+        {
+            fprintf(dis,"%lg", *((double*) &bin[counter]));
+            counter += sizeof(double);
+        }
         fprintf(dis,"\n");
     }
     free(rtr_val);
@@ -58,9 +61,9 @@ int main()
     FILE* bin = fopen("bin", "rb");
     assert(bin);
     fseek(bin,0,SEEK_END);
-    long const length = ftell(bin)/sizeof(double);
+    long const length = ftell(bin)/sizeof(char);
     fseek(bin,0,SEEK_SET);
-    double* bin_f = (double*) malloc ( length*sizeof(double) );
+    char* bin_f = (char*) malloc ( length*sizeof(char) );
     fread(bin_f, sizeof(*bin_f), length, bin);
     fclose(bin);
     bin = NULL;
