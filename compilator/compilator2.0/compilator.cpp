@@ -193,7 +193,6 @@ int main()
 
     struct cpu CPU = {};
     cpu_construct(&CPU, bin_f, length);
- //   cpu_dump(&CPU);
     compil(0, END_CODE, &CPU);
     cpu_destructor(&CPU);
 
