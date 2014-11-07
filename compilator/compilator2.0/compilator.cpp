@@ -21,6 +21,7 @@ struct cpu
 
 int compil(long start, long finish, struct cpu* CPU)
 {
+    assert(CPU);
     double x1 = 0, x2 = 0;
     long counter = start;
     while((CPU->command[counter] != finish) && (counter < CPU->length) && (counter >= 0))
@@ -149,6 +150,7 @@ int compil(long start, long finish, struct cpu* CPU)
 
 int cpu_dump(cpu* CPU)
 {
+    assert(CPU);
     printf("registers:\n x = %lg\n a = %lg\n b = %lg\n c = %lg\n d = %lg\n", CPU->x, CPU->a, CPU->b, CPU->c, CPU->d);
 
     stack_dump(CPU->buffer);
@@ -157,6 +159,7 @@ int cpu_dump(cpu* CPU)
 
 int cpu_construct(cpu* CPU, char* bin, long length)
 {
+    assert(CPU);
     CPU->x = 0;
     CPU->a = 0;
     CPU->b = 0;
@@ -171,6 +174,7 @@ int cpu_construct(cpu* CPU, char* bin, long length)
 
 int cpu_destructor(cpu* CPU)
 {
+    assert(CPU);
     free(CPU->command);
     CPU->command = NULL;
     stack_destructor(CPU->buffer);
