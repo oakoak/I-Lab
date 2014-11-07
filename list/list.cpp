@@ -1,5 +1,7 @@
 #include "list.h"
 
+int list_ok (List* head)
+
 List* add_right_element_list(List* head, int data)
 {
     List* New = (List*) malloc(sizeof(List));
