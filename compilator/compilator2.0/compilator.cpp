@@ -52,7 +52,6 @@ int compil(long start, long finish, struct cpu* CPU)
             if (fabs(x1) <= DBL_EPSILON * fmax(fabs(x1),fabs(0)))
                 assert(("division by 0",0));
             x2/=x1;
-            printf("%lg\n",x2);
             push(CPU->buffer, x2);
             break;
         }
