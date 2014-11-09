@@ -1,5 +1,5 @@
 #include "const.h"
-#include "stack.h"
+#include "stack1.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -30,9 +30,10 @@ int compil(long start, long finish, struct cpu* CPU)
         {
         case PUSH_CODE:
         {
-            push(CPU->buffer,*((double*) &CPU->command[counter]));
+            push(CPU->buffer, *((double*) &CPU->command[counter]));
             counter+=sizeof(double);
             break;
+
         }
         case ADD_CODE: push(CPU->buffer, (stack_pop(CPU->buffer) + stack_pop(CPU->buffer))); break;
         case MUL_CODE: push(CPU->buffer, (stack_pop(CPU->buffer) * stack_pop(CPU->buffer))); break;
@@ -40,7 +41,8 @@ int compil(long start, long finish, struct cpu* CPU)
         {
             x1 = stack_pop(CPU->buffer);
             x2 = stack_pop(CPU->buffer);
-            push(CPU->buffer, x2 - x1);
+            x2-=x1;
+            push(CPU->buffer, x2);
             break;
         }
         case DIV_CODE:
@@ -49,7 +51,9 @@ int compil(long start, long finish, struct cpu* CPU)
             x2 = stack_pop(CPU->buffer);
             if (fabs(x1) <= DBL_EPSILON * fmax(fabs(x1),fabs(0)))
                 assert(("division by 0",0));
-            push(CPU->buffer, x2/x1);
+            x2/=x1;
+            printf("%lg\n",x2);
+            push(CPU->buffer, x2);
             break;
         }
         case SIN_CODE: push(CPU->buffer,sin(stack_pop(CPU->buffer))); break;
@@ -60,7 +64,7 @@ int compil(long start, long finish, struct cpu* CPU)
             if (x1 < 0)
                 assert(("root of a negative number",0));
             else
-                push(CPU->buffer, x1);
+                push(CPU->buffer, sqrt(x1));
             break;
         }
         case JMP_CODE: counter = *((double*) &CPU->command[counter]); break;

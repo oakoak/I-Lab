@@ -1,8 +1,8 @@
-#include "stack.h"
+#include "stack1.h"
 int stack_constructor ( struct stek* stek_ctor, long max_size )
 {
     stek_ctor->max_size = max_size;
-    stek_ctor->data = ( char* ) calloc ( stek_ctor->max_size, sizeof(char));
+    stek_ctor->data = ( double* ) calloc ( stek_ctor->max_size, sizeof(double));
     if (stek_ctor->data == NULL)
         {
             printf("Not enough memory for the stack size %ld",max_size);
@@ -39,7 +39,7 @@ int stack_dump (struct stek* stek_push)
     {
         for (long i = 0; i < stek_push->max_size;i++)
         {
-            printf(" data[%ld] = %d ",i,stek_push->data[i]);
+            printf(" data[%ld] = %lg ",i,stek_push->data[i]);
             if (i >= stek_push->counter)
             {
                 printf("*");
@@ -51,12 +51,17 @@ int stack_dump (struct stek* stek_push)
     return 0;
 }
 
-int push (struct stek* stek_push, char x)
+int push (struct stek* stek_push, double x)
 {
-
-    if (stek_push->counter >= stek_push->max_size - sizeof(double))
+    if (!stack_ok(stek_push))
     {
-        char* P = (char*) realloc((void*) stek_push->data, (stek_push->max_size+=100)*sizeof(*stek_push->data));
+        stack_dump(stek_push);
+        printf("INVALID STACK\n");
+        abort();
+    }
+    if (stek_push->counter == stek_push->max_size)
+    {
+        double* P = (double*) realloc((void*) stek_push->data, (stek_push->max_size+=100)*sizeof(*stek_push->data));
         if (P!=NULL)
             stek_push->data = P;
         else
@@ -66,13 +71,6 @@ int push (struct stek* stek_push, char x)
             return 1;
         }
 
-    }
-
-    if (!stack_ok(stek_push))
-    {
-        stack_dump(stek_push);
-        printf("INVALID STACK\n");
-        abort();
     }
 
     if (!stack_ok(stek_push))
@@ -109,7 +107,7 @@ double stack_pop(struct stek* stek_pop)
     }
 
     if ((stek_pop->counter+200 < stek_pop->max_size) && (stek_pop->counter >0))
-        stek_pop->data = (char *) realloc(stek_pop->data, (stek_pop->max_size-=10)*sizeof(*stek_pop->data));
+        stek_pop->data = (double*) realloc(stek_pop->data, (stek_pop->max_size-=10)*sizeof(*stek_pop->data));
     assert(stek_pop->data);
     return stek_pop->data[--stek_pop->counter];
 }
