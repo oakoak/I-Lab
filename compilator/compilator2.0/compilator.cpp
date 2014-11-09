@@ -49,7 +49,7 @@ int compil(long start, long finish, struct cpu* CPU)
         {
             x1 = stack_pop(CPU->buffer);
             x2 = stack_pop(CPU->buffer);
-            if (fabs(x1) <= DBL_EPSILON * fmax(fabs(x1),fabs(0)))
+            if (fabs(x1) <= DBL_EPSILON *fabs(x1))
                 assert(("division by 0",0));
             x2/=x1;
             push(CPU->buffer, x2);
@@ -111,7 +111,7 @@ int compil(long start, long finish, struct cpu* CPU)
         {
             x1 = stack_pop(CPU->buffer);
             x2 = stack_pop(CPU->buffer);
-            if (x1 == x2)
+            if (fabs(x1-x2) <= DBL_EPSILON*fmax(fabs(x1), fabs(x2)))
                 counter = *((double*) &CPU->command[counter]);
             else
                 counter++;
@@ -121,7 +121,7 @@ int compil(long start, long finish, struct cpu* CPU)
         {
             x1 = stack_pop(CPU->buffer);
             x2 = stack_pop(CPU->buffer);
-            if (x1 != x2)
+            if (fabs(x1-x2) > DBL_EPSILON*fmax(fabs(x1), fabs(x2)))
                 counter = *((double*) &CPU->command[counter]);
             else
                 counter++;
