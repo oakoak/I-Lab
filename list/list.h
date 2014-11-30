@@ -5,15 +5,44 @@
 #include <assert.h>
 #include <stdlib.h>
 
+struct List_elem
+{
+    struct List_elem* left;
+    struct List_elem* right;
+    char* data;
+};
 
 struct List
 {
-    struct List* left;
-    struct List* right;
-    int data;
+    List_elem* head;
+    List_elem* tail;
+    int amount;
 };
 
-List* add_right_element_list(List* head, int data);
+List* list_crt (List* head);
+
+enum {FALSE = 0, TRUE = 1};
+enum {FIRST=0, LAST = 1, BEFORE = 4, AFTER = 5};
+
+enum
+{
+    GOOD_LIST = 0,
+    NULL_LIST_P = 1,
+    WRONG_LIST_HEAD,
+    WRONG_LIST_TAIL,
+    PREV_NEXT_CHAOS,
+    NULL_IN_MID,
+    NEG_COUNTER,
+    UNEXP_RELEV
+};
+
+//int List_errno = GOOD_LIST;
+
+
+
+
+
+List_elem* add_right_element_list(List* head, List_elem* elem, char*    data);
 /*
     adds an element after a specified element
 
@@ -24,7 +53,7 @@ List* add_right_element_list(List* head, int data);
     return returns a pointer to the new element
 
 */
-List* add_in_beginning_list (List* head, int data);
+List_elem* add_in_beginning_list (List* head, char* data);
 /*
     inserts an element at the beginning of the list(
 
@@ -34,7 +63,7 @@ List* add_in_beginning_list (List* head, int data);
 
     return returns a pointer to the new element
 */
-int delete_element_list(List* head);
+int delete_element_list(List* head, List_elem* elem);
 /*
     removes the specified item
 
